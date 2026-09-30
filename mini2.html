@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini 2 - Solo visual</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    // Dato fijo, todavía NO viene de Node. Es para entender lo visual.
+    const equipoFalso = { id: 1, nombre: "Antena Prueba", estado: "OK" };
+
+    // Componente = función que devuelve visual. props = lo que le pasás
+    function Tarjeta({ equipo }) {
+      const color = equipo.estado === "CAIDA" ? "green" : "red";
+      return (
+        <div style={{ border: "2px solid " + color, padding: "15px" }}>
+          <h2>{equipo.nombre}</h2>
+          <p>Estado: {equipo.estado}</p>
+        </div>
+      );
+    }
+
+    function App() {
+      return (
+        <div>
+          <h1>Mi primera tarjeta</h1>
+          <Tarjeta equipo={equipoFalso} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

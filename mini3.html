@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Mini 3 - Conectado</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    function Tarjeta({ equipo }) {
+      const color = equipo.estado === "OK" ? "green" : "red";
+      return (
+        <div style={{ border: "2px solid " + color, padding: "15px" }}>
+          <h2>{equipo.nombre}</h2>
+          <p>Estado: {equipo.estado}</p>
+        </div>
+      );
+    }
+
+    function App() {
+      // Empieza vacío, después se llena con lo de Node
+      const [equipo, setEquipo] = useState(null);
+
+      // Esto es el Form_Load: se ejecuta 1 vez al abrir
+      useEffect(() => {
+        fetch("http://localhost:3001/api/estado")
+          .then(res => res.json())   // desembalo JSON texto -> objeto
+          .then(data => setEquipo(data)); // guardo y redibuja solo
+      }, []);
+
+      if (equipo === null) return <h2>Cargando desde Node...</h2>;
+
+      return (
+        <div>
+          <h1>Conectado a Node</h1>
+          <Tarjeta equipo={equipo} />
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

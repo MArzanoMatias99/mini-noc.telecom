@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>NOC Telecom - Dashboard</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { font-family: Arial; background: #111; color: white; padding: 20px; }
+    .card { background: #222; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 8px solid gray; }
+    .ok { border-color: #00e676; }
+    .caida { border-color: #ff1744; }
+    button { padding: 10px 20px; margin-top: 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Componente = como un UserControl de VB.NET
+    function TarjetaEquipo({ equipo }) {
+      const clase = equipo.estado === "OK" ? "card ok" : "card caida";
+      return (
+        <div className={clase}>
+          <h3>{equipo.nombre} (ID: {equipo.id})</h3>
+          <p>Estado: <b>{equipo.estado}</b> | Ping: {equipo.ping} ms</p>
+        </div>
+      );
+    }
+
+    function App() {
+      // useState = variables del Form que al cambiar, redibujan solas
+      const [equipos, setEquipos] = useState([]);
+      const [cargando, setCargando] = useState(true);
+
+      // useEffect = como el Form_Load de VB. Se ejecuta 1 vez al abrir.
+      useEffect(() => {
+        fetch("http://localhost:3000/api/equipos")
+          .then(res => res.json())
+          .then(data => {
+            setEquipos(data);
+            setCargando(false);
+          });
+      }, []);
+
+      if (cargando) return <h2>Cargando equipos...</h2>;
+
+      const caidos = equipos.filter(e => e.estado === "CAIDA");
+
+      return (
+        <div>
+          <h1>Dashboard NOC - Telecom</h1>
+          <p>Total: {equipos.length} | Caídos: {caidos.length}</p>
+          <button onClick={() => window.location.reload()}>Actualizar</button>
+          {equipos.map(eq => <TarjetaEquipo key={eq.id} equipo={eq} />)}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
