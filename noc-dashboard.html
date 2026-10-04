@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mis antenas</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React; // 1*
+
+      function App() {
+        const [lista, setLista] = useState(null); //1b* con estos 2 creo espacios de memoria para guardar lo que venga de node
+
+        useEffect(() => {
+          fetch("http://localhost:3002/api/antenas")
+            .then((r) => r.json())
+            .then((d) => setLista(d));
+        }, []); // el fetch es el formload y de donde saco la data una vez, el [] sirve para que no quede en loop
+        // sin r.json guarda texto sin formato
+
+        if (lista === null) return <h2>Cargando mis antenas...</h2>; //sirve para mostrar un mensaje mientras la informacion
+        // sin esto cuando se quiera ejecutar MAp se va a romper todo al no hayber anda que colocar
+
+        return (
+          <div>
+            <h1>Mis antenas</h1>
+            {lista.map((a) => (
+              <div
+                key={a.id}
+                style={{
+                  border: "2px solid " + (a.estado === "OK" ? "green" : "red"),
+                  margin: "10px",
+                  padding: "10px",
+                }}
+              >
+                <b>{a.nombre}</b> - {a.estado} - {a.ping}ms
+              </div>
+            ))}
+          </div>
+        );
+      }
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>
